@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/mike-keough/pipelinepal/internal/db"
+	"github.com/mike-keough/pipelinepal/internal/models"
+	"github.com/mike-keough/pipelinepal/internal/repo"
 	"github.com/spf13/cobra"
-	"github.com/yourname/pipelinepal/internal/db"
-	"github.com/yourname/pipelinepal/internal/models"
-	"github.com/yourname/pipelinepal/internal/repo"
 )
 
 var leadCmd = &cobra.Command{

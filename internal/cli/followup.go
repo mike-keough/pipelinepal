@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/mike-keough/pipelinepal/internal/db"
 	"github.com/spf13/cobra"
-	"github.com/yourname/pipelinepal/internal/db"
 )
 
 var followupCmd = &cobra.Command{

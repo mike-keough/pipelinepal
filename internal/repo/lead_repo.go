@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/yourname/pipelinepal/internal/models"
+	"github.com/mike-keough/pipelinepal/internal/models"
 )
 
 type LeadRepo struct {

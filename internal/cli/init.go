@@ -3,8 +3,8 @@ package cli
 import (
 	"fmt"
 
+	"github.com/mike-keough/pipelinepal/internal/db"
 	"github.com/spf13/cobra"
-	"github.com/yourname/pipelinepal/internal/db"
 )
 
 var initCmd = &cobra.Command{

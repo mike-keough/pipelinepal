@@ -1,28 +1,44 @@
 package db
 
 import (
+	"context"
 	"database/sql"
-	"os"
-	"path/filepath"
+	"fmt"
+	"time"
 
-	_ "modernc.org/sqlite"
+	_ "github.com/mattn/go-sqlite3"
 )
 
-func Open(path string) (*sql.DB, error) {
-	dir := filepath.Dir(path)
-	if err := os.MkdirAll(dir, 0o755); err != nil {
-		return nil, err
-	}
+type DB struct {
+	*sql.DB
+	path string
+}
 
-	db, err := sql.Open("sqlite", path)
+func Open(path string) (*DB, error) {
+	// Busy timeout helps with “database is locked” during fast UI operations
+	dsn := fmt.Sprintf("file:%s?_foreign_keys=on&_busy_timeout=5000", path)
+	sqldb, err := sql.Open("sqlite3", dsn)
 	if err != nil {
 		return nil, err
 	}
+	sqldb.SetConnMaxLifetime(30 * time.Minute)
+	sqldb.SetMaxOpenConns(1) // SQLite is happiest with 1 writer
+	sqldb.SetMaxIdleConns(1)
 
-	// Good practice for sqlite
-	if _, err := db.Exec(`PRAGMA foreign_keys = ON;`); err != nil {
-		db.Close()
+	if err := sqldb.Ping(); err != nil {
+		_ = sqldb.Close()
 		return nil, err
 	}
-	return db, nil
+	return &DB{DB: sqldb, path: path}, nil
+}
+
+func (d *DB) Close() error {
+	if d.DB == nil {
+		return nil
+	}
+	return d.DB.Close()
+}
+
+func (d *DB) Migrate(ctx context.Context) error {
+	return runMigrations(ctx, d.DB)
 }
